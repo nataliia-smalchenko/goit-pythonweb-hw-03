@@ -16,18 +16,18 @@ class MyHandler(BaseHTTPRequestHandler):
     def do_GET(self):
         route = urllib.parse.urlparse(self.path)
         match route.path:
-            case "/":
-                self.send_html("index.html")
+            case "/" | "/index" | "/index.html":
+                self.send_html(BASE_DIR.joinpath("templates", "index.html"))
             case "/read":
                 self.render_template("messages.jinja")
-            case "/message":
-                self.send_html("message.html")
+            case "/message" | "/message.html":
+                self.send_html(BASE_DIR.joinpath("templates", "message.html"))
             case _:
                 file = BASE_DIR.joinpath(route.path[1:])
                 if file.exists():
                     self.send_static(file)
                 else:
-                    self.send_html("error.html", 404)
+                    self.send_html(BASE_DIR.joinpath("templates", "error.html"), 404)
 
     def do_POST(self):
         size = self.headers.get("Content-Length")
